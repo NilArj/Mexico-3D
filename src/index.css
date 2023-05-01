@@ -10,6 +10,8 @@ html, body, #root {
   margin: 0;
 }
 
+/* navbar */
+
 .navbar {
   align-items: center;
   display: flex;
@@ -38,7 +40,11 @@ html, body, #root {
 }
 
 
+/* content */
 
+.content-section {
+  height: calc(100% - 45px);
+}
 
 
 
