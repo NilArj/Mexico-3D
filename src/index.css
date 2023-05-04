@@ -48,10 +48,19 @@ html, body, #root {
 
 
 /* loader */
+.loader--container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 45px);
+  
+}
+
 .loader {
   width: 48px;
   height: 48px;
-  display: inline-block;
+  display: grid;
+  place-content: center;
   position: relative;
 }
 .loader::after,
