@@ -16,9 +16,11 @@
     "maath": "^0.5.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-frame-component": "^5.2.6",
     "react-router-dom": "^6.11.0",
     "three": "^0.151.3",
-    "three.meshline": "^1.4.0"
+    "three.meshline": "^1.4.0",
+    "uuid-by-string": "^4.0.0"
   },
   "devDependencies": {
     "@types/react": "^18.0.28",

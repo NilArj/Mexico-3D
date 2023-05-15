@@ -1,33 +1,19 @@
 import React, { Suspense } from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { Html } from "@react-three/drei";
-import Layout from "./components/Layout";
 import Home from "./pages/Home";
-import Gallery from "./pages/Gallery";
-import Shop from "./pages/Shop";
-import Stadium from "./pages/Stadium";
+import Error from "./pages/Error";
+import Loader from "./components/Loader";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Layout />,
+    element: <Home />,
+    errorElement: <Error />,
     children: [
       {
-        path: "/",
+        path: "/:id",
         element: <Home />,
-      },
-      {
-        path: "/gallery",
-        element: <Gallery />,
-      },
-      {
-        path: "/shop",
-        element: <Shop />,
-      },
-      {
-        path: "/stadium",
-        element: <Stadium />,
       },
     ],
   },
@@ -35,6 +21,8 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <Suspense fallback={<Loader />}>
+      <RouterProvider router={router} />
+    </Suspense>
   </React.StrictMode>
 );

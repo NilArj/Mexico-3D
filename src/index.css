@@ -5,55 +5,34 @@ html, body, #root {
 }
 
 * {
-  background-color: #181733 ;
+  background-color: #090909 ;
   box-sizing: border-box;
   margin: 0;
 }
 
-/* navbar */
-
-.navbar {
-  align-items: center;
+/* frame */
+.annotation {
+  outline: none;
+  border: none;
+  font-size: 3px;
+  font-weight: 800;
+  background: black;
+  color: #f0f0f0;
+  padding: 4px 12px;
+  border-radius: 2px;
+  letter-spacing: 0.1px;
   display: flex;
-  height: 45px;
-  justify-content: space-between;
-  margin: 0 auto;
-  max-width: 800px;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
 }
-
-.navbar h3 {
-  font-family: Arial, Helvetica, sans-serif;
-  font-weight: 400;
-  text-decoration: none;
-  padding: 8px 16px;
-}
-
-.navbar a {
-  text-decoration: none;
-  color: #fff;
-}
-
-.navbar a:hover {
-  color: #fafafa;
-  text-decoration: underline;
-  text-underline-offset: 8px;
-}
-
-
-/* content */
-
-.content-section {
-  height: calc(100% - 45px);
-}
-
 
 /* loader */
 .loader--container{
   display: flex;
   justify-content: center;
   align-items: center;
-  height: calc(100vh - 45px);
-  
+  height: 100vh; 
 }
 
 .loader {
