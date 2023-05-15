@@ -1,4 +1,5 @@
 import { Canvas, useLoader } from "@react-three/fiber";
+import { useState } from "react";
 import * as THREE from "three";
 import {
   Text,
@@ -10,7 +11,6 @@ import {
 import bgImage from "../images/chichen3.jpg";
 import image1 from "../images/diademuertos.jpg";
 import image2 from "../images/mariachi.jpg";
-import image3 from "../images/tequila.jpg";
 import image4 from "../images/chichen2.jpg";
 
 const CustomTexts = () => {
@@ -71,7 +71,50 @@ const CustomBackground = () => {
   );
 };
 
-const Images = () => {
+const Images = ({ url, position }) => {
+  const [hovered, setHovered] = useState(false);
+  const texture = useLoader(THREE.TextureLoader, url);
+  const frameColor = hovered ? "#537188" : "#f2f1ee";
+
+  return (
+    <Float
+      speed={1}
+      rotationIntensity={0.1}
+      floatIntensity={0.2}
+      floatingRange={[0.1, -0.1]}
+    >
+      <group position={position}>
+        {/* image */}
+        <mesh castShadow receiveShadow>
+          <planeGeometry args={[1, 1]} />
+          <meshStandardMaterial map={texture} />
+        </mesh>
+        {/* frame */}
+        <mesh
+          castShadow
+          receiveShadow
+          position={[0, 0, -0.01]}
+          onPointerOver={() => setHovered(true)}
+          onPointerOut={() => setHovered(false)}
+        >
+          <planeGeometry args={[1.08, 1.08]} />
+          <meshStandardMaterial color={frameColor} />
+        </mesh>
+        {/* shadow */}
+        <mesh
+          position={[0, -1.4, 0]}
+          rotation={[-Math.PI / 2, 0, 0]}
+          receiveShadow
+        >
+          <planeGeometry args={[1.4, 1.4]} />
+          <meshStandardMaterial color={"#000000"} transparent opacity={0.3} />
+        </mesh>
+      </group>
+    </Float>
+  );
+};
+
+const Home = () => {
   const images = [
     // Left
     {
@@ -81,7 +124,6 @@ const Images = () => {
       item: 2,
     },
     // Front
-
     {
       position: [0, 0, 2.7],
       rotation: [0, 0, 0],
@@ -89,7 +131,6 @@ const Images = () => {
       item: 1,
     },
     // Right
-
     {
       position: [1.8, 0, 2],
       rotation: [0, -Math.PI / 2.5, 0],
@@ -99,28 +140,15 @@ const Images = () => {
   ];
 
   return (
-    <>
-      {images.map((item, index) => {
-        const texture = useLoader(THREE.TextureLoader, item.url);
-        return (
-          <mesh key={index} position={item.position}>
-            <planeGeometry args={[1, 1]} />
-            <meshBasicMaterial map={texture} />
-          </mesh>
-        );
-      })}
-    </>
-  );
-};
-
-const Home = () => {
-  return (
-    <Canvas>
-      <group>
-        <CustomBackground />
-      </group>
+    <Canvas shadow-map>
+      <CustomBackground />
       <CustomTexts />
-      <Images />
+      <ambientLight intensity={0.2} />
+      <spotLight position={[10, 15, 10]} angle={0.3} penumbra={3} castShadow />
+      {images.map((item) => (
+        <Images key={item.url} url={item.url} position={item.position} />
+      ))}
+
       <Environment preset="city" />
     </Canvas>
   );
