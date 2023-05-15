@@ -10,12 +10,6 @@ const router = createBrowserRouter([
     path: "/",
     element: <Home />,
     errorElement: <Error />,
-    children: [
-      {
-        path: "/:id",
-        element: <Home />,
-      },
-    ],
   },
 ]);
 
