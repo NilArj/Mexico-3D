@@ -1,7 +1,7 @@
 import { Canvas, useLoader, useFrame } from "@react-three/fiber";
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
-import { Text, Float, Environment, useCursor } from "@react-three/drei";
+import { Text, Float, Environment, useCursor, Image } from "@react-three/drei";
 import { useRoute, useLocation } from "wouter";
 import { easing } from "maath";
 import getUuid from "uuid-by-string";
@@ -72,20 +72,20 @@ const CustomBackground = () => {
 };
 
 const ImageFrame = ({ url, position, c = new THREE.Color() }) => {
-  const texture = useLoader(THREE.TextureLoader, url);
+  const image = useRef();
   const frame = useRef();
-  const [hovered, setHovered] = useState(false);
-  const frameColor = hovered ? "#537188" : "#f2f1ee";
   const [, params] = useRoute("/item/:id");
+  const [hovered, hover] = useState(false);
   const [rnd] = useState(() => Math.random());
   const name = getUuid(url);
+
   const isActive = params?.id === name;
   useCursor(hovered);
   useFrame((state, dt) => {
-    frame.current.material.zoom =
-      2 + Math.sin(rnd * 10000 + state.clock.elapsedTime / 3) / 2;
+    image.current.material.zoom =
+      0.9 - Math.sin(rnd * 10000 + state.clock.elapsedTime / 8) / 10.5;
     easing.damp3(
-      frame.current.scale,
+      image.current.scale,
       [
         0.85 * (!isActive && hovered ? 0.85 : 1),
         0.9 * (!isActive && hovered ? 0.905 : 1),
@@ -96,56 +96,45 @@ const ImageFrame = ({ url, position, c = new THREE.Color() }) => {
     );
     easing.dampC(
       frame.current.material.color,
-      hovered ? "blue" : "white",
+      hovered ? "yellow" : "white",
       0.1,
       dt
     );
   });
 
   return (
-    <Float
-      speed={1}
-      rotationIntensity={0.1}
-      floatIntensity={0.2}
-      floatingRange={[0.1, -0.1]}
-    >
-      <group>
-        {/* image */}
+    <group>
+      <mesh
+        name={name}
+        onPointerOver={(e) => (e.stopPropagation(), hover(true))}
+        onPointerOut={() => hover(false)}
+        scale={[1.5, 1.8, 0.15]}
+        position={[0, 0.95, 0]}
+      >
+        <boxGeometry />
+        <meshStandardMaterial
+          color="#151515"
+          metalness={0.5}
+          roughness={0.5}
+          envMapIntensity={2}
+        />
         <mesh
-          name={name}
           ref={frame}
-          onPointerOver={(e) => (e.stopPropagation(), setHovered(true))}
-          onPointerOut={() => setHovered(false)}
-          scale={[1, GOLDENRATIO, 0.05]}
-          position={[position[0], position[1], position[2]]}
+          raycast={() => null}
+          scale={[0.9, 0.93, 0.9]}
+          position={[0, 0, 0.2]}
         >
-          <planeGeometry args={[1, 1]} />
-          <meshStandardMaterial map={texture} />
+          <boxGeometry />
+          <meshBasicMaterial toneMapped={false} fog={false} />
         </mesh>
-
-        {/* frame */}
-        <mesh
-          castShadow
-          receiveShadow
-          position={[0, 0, -0.01]}
-          onPointerOver={() => setHovered(true)}
-          onPointerOut={() => setHovered(false)}
-        >
-          <planeGeometry args={[1.08, 1.08]} />
-          <meshStandardMaterial color={frameColor} />
-        </mesh>
-
-        {/* shadow */}
-        <mesh
-          position={[0, -1.4, 0]}
-          rotation={[-Math.PI / 2, 0, 0]}
-          receiveShadow
-        >
-          <planeGeometry args={[1.4, 1.4]} />
-          <meshStandardMaterial color="#000000" transparent opacity={0.3} />
-        </mesh>
-      </group>
-    </Float>
+        <Image
+          raycast={() => null}
+          ref={image}
+          position={[0, 0, 0.7]}
+          url={url}
+        />
+      </mesh>
+    </group>
   );
 };
 
@@ -156,52 +145,42 @@ const Images = ({
 }) => {
   const ref = useRef();
   const clicked = useRef();
+
   const [, params] = useRoute("/item/:id");
   const [, setLocation] = useLocation();
-
   useEffect(() => {
     clicked.current = ref.current.getObjectByName(params?.id);
     if (clicked.current) {
       clicked.current.parent.updateWorldMatrix(true, true);
-      clicked.current.parent.localToWorld(p.set(0, GOLDENRATIO / 2, 1.25));
+      clicked.current.parent.localToWorld(
+        p.set(0, GOLDENRATIO / 2 + 0.15, 1.3)
+      );
       clicked.current.parent.getWorldQuaternion(q);
     } else {
-      p.set(0, 0, 5.5);
+      p.set(0, 0.6, 4.5);
       q.identity();
     }
   });
-
   useFrame((state, dt) => {
     easing.damp3(state.camera.position, p, 0.4, dt);
     easing.dampQ(state.camera.quaternion, q, 0.4, dt);
   });
 
   return (
-    <Float
-      speed={1}
-      rotationIntensity={0.1}
-      floatIntensity={0.2}
-      floatingRange={[0.1, -0.1]}
+    <group
+      ref={ref}
+      onClick={(e) => (
+        e.stopPropagation(),
+        setLocation(
+          clicked.current === e.object ? "/" : "/item/" + e.object.name
+        )
+      )}
+      onPointerMissed={() => setLocation("/")}
     >
-      <group
-        ref={ref}
-        onClick={(e) => (
-          e.stopPropagation(),
-          setLocation(
-            clicked.current === e.object ? "/" : "/item/" + e.object.name
-          )
-        )}
-        onPointerMissed={() => setLocation("/")}
-      >
-        {images.map((image) => (
-          <ImageFrame
-            key={image.item}
-            url={image.url}
-            position={image.position}
-          />
-        ))}
-      </group>
-    </Float>
+      {images.map((image) => (
+        <ImageFrame key={image.item} url={image.url} />
+      ))}
+    </group>
   );
 };
 
@@ -231,12 +210,15 @@ const Home = () => {
   ];
 
   return (
-    <Canvas shadow-map>
+    <Canvas>
       <CustomBackground />
       <CustomTexts />
       <ambientLight intensity={0.2} />
       <spotLight position={[10, 15, 10]} angle={0.3} penumbra={3} castShadow />
-      <Images images={images} />
+      <group position={[0, -0.5, 0]}>
+        <Images images={images} />
+      </group>
+
       <Environment preset="city" />
     </Canvas>
   );
