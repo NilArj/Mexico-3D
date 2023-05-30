@@ -71,7 +71,7 @@ const CustomBackground = () => {
   );
 };
 
-const ImageFrame = ({ url, position, c = new THREE.Color() }) => {
+const ImageFrame = ({ url, c = new THREE.Color(), ...props }) => {
   const image = useRef();
   const frame = useRef();
   const [, params] = useRoute("/item/:id");
@@ -103,12 +103,12 @@ const ImageFrame = ({ url, position, c = new THREE.Color() }) => {
   });
 
   return (
-    <group>
+    <group {...props}>
       <mesh
         name={name}
         onPointerOver={(e) => (e.stopPropagation(), hover(true))}
         onPointerOut={() => hover(false)}
-        scale={[1.5, 1.8, 0.15]}
+        scale={[1.2, 1.5, 0.05]}
         position={[0, 0.95, 0]}
       >
         <boxGeometry />
@@ -177,8 +177,8 @@ const Images = ({
       )}
       onPointerMissed={() => setLocation("/")}
     >
-      {images.map((image) => (
-        <ImageFrame key={image.item} url={image.url} />
+      {images.map((props) => (
+        <ImageFrame key={props.item} {...props} />
       ))}
     </group>
   );
@@ -189,13 +189,13 @@ const Home = () => {
     // Left
     {
       position: [-1.8, 0, 2],
-      rotation: [0, Math.PI / 6, 0],
+      rotation: [0, Math.PI / 20, 0],
       url: image2,
       item: 2,
     },
     // Front
     {
-      position: [0, 0, 2.7],
+      position: [0, -0.07, 2.5],
       rotation: [0, 0, 0],
       url: image1,
       item: 1,
@@ -203,7 +203,7 @@ const Home = () => {
     // Right
     {
       position: [1.8, 0, 2],
-      rotation: [0, -Math.PI / 2.5, 0],
+      rotation: [0, -Math.PI / 20, 0],
       url: image4,
       item: 4,
     },
