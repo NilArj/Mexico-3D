@@ -1,11 +1,17 @@
 import { Canvas, useLoader, useFrame } from "@react-three/fiber";
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
-import { Text, Float, Environment, useCursor, Image } from "@react-three/drei";
+import {
+  Text,
+  Float,
+  Environment,
+  useCursor,
+  Image,
+  MeshReflectorMaterial,
+} from "@react-three/drei";
 import { useRoute, useLocation } from "wouter";
 import { easing } from "maath";
 import getUuid from "uuid-by-string";
-
 import bgImage from "../images/wall2.jpg";
 import image1 from "../images/diademuertos.jpg";
 import image2 from "../images/mariachi.jpg";
@@ -58,10 +64,10 @@ const CustomBackground = () => {
 
   return (
     <Float
-      speed={1} // Animation speed, defaults to 1
-      rotationIntensity={0.1} // XYZ rotation intensity, defaults to 1
-      floatIntensity={0.2} // /down float intensity, works like a multiplier with floatingRange,defaults to 1
-      floatingRange={[-0.1, 0.1]} // Range of y-axis values the object will float within, defaults to [-0.1,0.1]
+      speed={1}
+      rotationIntensity={0.1}
+      floatIntensity={0.2}
+      floatingRange={[-0.1, 0.1]}
     >
       <mesh scale={[25, 9.8, 1]} position={[0, 0, -1]}>
         <meshBasicMaterial map={texture} />
@@ -74,6 +80,7 @@ const CustomBackground = () => {
 const ImageFrame = ({ url, c = new THREE.Color(), ...props }) => {
   const image = useRef();
   const frame = useRef();
+
   const [, params] = useRoute("/item/:id");
   const [hovered, hover] = useState(false);
   const [rnd] = useState(() => Math.random());
@@ -217,6 +224,21 @@ const Home = () => {
       <spotLight position={[10, 15, 10]} angle={0.3} penumbra={3} castShadow />
       <group position={[0, -0.5, 0]}>
         <Images images={images} />
+        <mesh rotation={[-Math.PI / 2, 0, 0]}>
+          <planeGeometry args={[50, 50]} />
+          <MeshReflectorMaterial
+            blur={[300, 100]}
+            resolution={2048}
+            mixBlur={1}
+            mixStrength={50}
+            roughness={1}
+            depthScale={1.2}
+            minDepthThreshold={0.4}
+            maxDepthThreshold={1.4}
+            color="#710a3d"
+            metalness={0.01}
+          />
+        </mesh>
       </group>
 
       <Environment preset="city" />
