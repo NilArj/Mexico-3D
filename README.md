@@ -31,6 +31,6 @@ To run the app locally, follow these steps:
 
 ## Screenshots
 <div style="display: flex; flex-direction: row;">
-  <img  style="margin-bottom: 10px;" src="https://github.com/NilArj/Mexico-3D/blob/ba543e434ac7b9f711e3506328f7aa29f6c114d4/src/images/ezgif.com-gif-maker.mp4" alt="mexico landing page" width="600" height="280">
+  <img  style="margin-bottom: 10px;" src="https://github.com/NilArj/Mexico-3D/blob/0576de23e94f496d7da9ca874c847b10646a2ad1/src/images/ezgif.com-video-to-gif.gif" alt="mexico landing page" width="600" height="280">
 
 </div>
